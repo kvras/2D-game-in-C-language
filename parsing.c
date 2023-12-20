@@ -32,10 +32,10 @@ int flood_fill(map *map,int x, int y)
 {
 	int i;
 	i = 0;
+	printf("%d\n", map->collect);
+	printf("%d\n", map->exit);
 	if(map->collect == 0 && map->exit == 0)
 		return (1);
-	if(map->map[x][y] == 'P')
-		map->map[x][y] = '1';
 	if(map->map[x][y] == 'C')
 		(map->collect)--;
 	if(map->map[x][y] == 'E')
@@ -73,7 +73,11 @@ int simple_checker(map *map)
 			else if(map->map[x][y] == 'C')
 				map->collect++;
 			else if(map->map[x][y] == 'P')
+			{
 				map->player++;
+				map->avatar_x = x;
+				map->avatar_x = y;
+			}
 			else if(map->map[x][y] != '0' && map->map[x][y] != '1')
 				return (0);
 			if(map->map[x][0] != '1' || map->map[x][map->width - 1] != '1')
@@ -90,8 +94,7 @@ int simple_checker(map *map)
 			}
 			y++;
 		}
-		x++;
-		
+		x++;	
 	}
 	return (1);
 }
@@ -112,10 +115,11 @@ int checker_caller(char *file, map *map)
 	fd = open(file, O_RDONLY);
 	if(fd == -1)
 		return (0);
-	map_matrix(map,fd);
+	map_matrix(map, fd);
 	response = deep_checker(map);
 	if(response == 1)
-		response = flood_fill(map,6,1);
+		response = flood_fill(map,map->avatar_x,map->avatar_y);
+	printf("%d\n", response);
 	close(fd);
 	return (response);
 }
