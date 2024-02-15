@@ -1,4 +1,34 @@
+<<<<<<< HEAD
 Makefile: flags for get_next_line
 main files: Protect malloc from segf
 protect mlx function that return void *
 bonus and mandatory
+=======
+
+
+Local Variables: In C, local variables are stored on the stack and get destroyed once the function call is over. Therefore, returning the address 
+of a local variable leads to undefined behavior because you're accessing memory that's no longer valid.
+
+
+Returning a Struct: When you return a struct (not a pointer to a struct) from a function in C, a copy of the struct is made in a new memory location 
+that is not tied to the function's stack frame. This copy is not destroyed when the function returns, so you can safely use it. However, changes to 
+the returned struct will not affect the original struct in the function.
+
+
+
+Returning a Pointer to a Struct: When you return a pointer to a struct, you're returning the memory address of the struct. This allows modifications 
+to the struct through the returned pointer to affect the original struct. However, you need to be careful with memory management when working with pointers. 
+If you dynamically allocate memory for the struct, you need to make sure to free it when you're done.
+
+
+
+Accessing Struct Members: When you have a pointer to a struct, you can access the members of the struct using the -> operator. 
+For example, if copy_struct is a pointer to a t_game struct, you can access the map member using copy_struct->map.
+
+
+
+Array Indexing: The map member appears to be a pointer to a pointer (or an array of pointers), so you can access its elements using array indexing.
+For example, copy_struct->map[0] accesses the first element. Always ensure that your pointers are not NULL before you dereference them, 
+and that any memory they point to has been properly allocated and initialized. If copy_struct or copy_struct->map is NULL,
+or if copy_struct->map has not been properly initialized, then trying to access copy_struct->map[0] could cause a segmentation fault.
+>>>>>>> 77b68767c4a10c9652dba354073b1bdf1fcdd124
