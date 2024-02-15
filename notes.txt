@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-Makefile: flags for get_next_line
-main files: Protect malloc from segf
-protect mlx function that return void *
-bonus and mandatory
-=======
 
 
 Local Variables: In C, local variables are stored on the stack and get destroyed once the function call is over. Therefore, returning the address 
@@ -31,4 +25,3 @@ Array Indexing: The map member appears to be a pointer to a pointer (or an array
 For example, copy_struct->map[0] accesses the first element. Always ensure that your pointers are not NULL before you dereference them, 
 and that any memory they point to has been properly allocated and initialized. If copy_struct or copy_struct->map is NULL,
 or if copy_struct->map has not been properly initialized, then trying to access copy_struct->map[0] could cause a segmentation fault.
->>>>>>> 77b68767c4a10c9652dba354073b1bdf1fcdd124

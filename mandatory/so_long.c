@@ -6,7 +6,7 @@
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 18:29:22 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/15 00:38:06 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/02/15 20:54:29 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ void	free_arr(char **arr)
 
 int	checker(int x, int y, void *param)
 {
-	int		j;
-	char	*str;
 	t_game	*mlx;
 
 	mlx = (t_game *)param;
@@ -57,13 +55,7 @@ int	checker(int x, int y, void *param)
 		return (1);
 	}
 	ft_printf("total mouvements: %d\n", ++mlx->mouvements);
-	j = 0;
-	while (j <= 5)
-		mlx_put_image_to_window(mlx->init, mlx->window, mlx->wall, j++ * 50, 0);
-	str = ft_itoa(mlx->mouvements);
-	mlx_string_put(mlx->init, mlx->window, 20, 15, 16777215, "Number of mouvements : ");
-	mlx_string_put(mlx->init, mlx->window, 250, 15, 16777215, str);
-	return (free(str), 1);
+	return (1);
 }
 
 int	img_mnpl(int keycode, void *param)
@@ -103,8 +95,8 @@ int	img_mnpl(int keycode, void *param)
 }
 int close_window(int keycode, void *param)
 {
-	t_game *mlx;
- 
+	t_game	*mlx;
+
 	mlx = (t_game *)param;
 	if (keycode == 53)
 	{
@@ -156,19 +148,31 @@ int on_destroy(void *param)
 	free_arr(mlx->map);
 	exit(0);
 }
-
-void	v()
+void	initialise_images(t_game *display)
 {
-	system("leaks so_long");
+	int	width;
+	int	height;
+
+	display->avatar = mlx_xpm_file_to_image(display->init,
+			"./textures/pacman_b.xpm", &width, &height);
+	display->wall = mlx_xpm_file_to_image(display->init,
+			"./textures/wall.xpm", &width, &height);
+	display->road = mlx_xpm_file_to_image(display->init,
+			"./textures/map.xpm", &width, &height);
+	display->collect_img = mlx_xpm_file_to_image(display->init,
+			"./textures/collectible.xpm", &width, &height);
+	display->exit_img = mlx_xpm_file_to_image(display->init,
+			"./textures/p.xpm", &width, &height);
+	display->ennemy = mlx_xpm_file_to_image(display->init,
+			"./textures/ghost1.xpm", &width, &height);
+	display->window = mlx_new_window(display->init,
+			display->width * 50, display->len * 50, "so_long");
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_game		display;
-	int			width;
-	int			height;
 
-	atexit(f);
 	display.map = NULL;
 	if (argc != 2)
 		return (0);
@@ -177,14 +181,7 @@ int main(int argc, char **argv)
 	display.mouvements = 0;
 	display.init = mlx_init();
 	display.width--;
-	display.window = mlx_new_window(display.init, display.width * 50, display.len * 50, "so_long");
-	display.avatar = mlx_xpm_file_to_image(display.init, "ghost1.xpm", &width, &height);
-	display.wall = mlx_xpm_file_to_image(display.init, "wall.xpm", &width, &height);
-	display.road = mlx_xpm_file_to_image(display.init, "map.xpm", &width, &height);
-	display.collect_img = mlx_xpm_file_to_image(display.init, "collectible.xpm", &width, &height);
-	display.exit_img = mlx_xpm_file_to_image(display.init, "p.xpm", &width, &height);
-	if (!display.avatar || !display.wall || !display.road || !display.collect_img || !display.exit_img || !display.init || !display.window)
-		return (free_arr(display.map), destroy(display), ft_printf("Error\n"), 0);
+	initialise_images(&display);
 	print_components(&display);
 	mlx_key_hook(display.window, close_window, (void *)(&display));
 	mlx_hook(display.window, 17, 0, on_destroy, (void *)(&display));

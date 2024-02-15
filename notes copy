@@ -1,4 +1,0 @@
-Makefile: flags for get_next_line
-main files: Protect malloc from segf
-protect mlx function that return void *
-bonus and mandatory

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
+/*   parsing_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 00:45:27 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/15 00:26:09 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/02/15 17:42:21 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "so_long_bonus.h"
 
 void	free_struct(t_game *so_long)
 {
@@ -33,9 +33,12 @@ t_game	*copy(t_game *so_long)
 	int			i;
 	int			j;
 
+
 	copy = (t_game *)malloc(sizeof(t_game));
+	if(!copy)
+		return (NULL);
 	copy->map = (char **)malloc(sizeof(char *) * so_long->len);
-	if(!copy || !copy->map)
+	if (!copy->map)
 		return (free_struct(copy), NULL);
 	i = 0;
 	while (i < so_long->len)
@@ -107,9 +110,10 @@ int	flood_fill(t_game *so_long, int x, int y)
 	i = 0;
 	if (so_long->map[x][y] == 'C')
 		(so_long->collect)--;
-	if (so_long->map[x][y] == 'E')
+	if (so_long->map[x][y] == 'E' || so_long->map[x][y] == 'G')
 	{
-		(so_long->exit)--;
+		if (so_long->map[x][y] == 'E')
+			(so_long->exit)--;
 		so_long->map[x][y] = '1';
 		return (0);
 	}
@@ -174,7 +178,7 @@ int	components_counter(t_game *so_long)
 				so_long->avatar_x = x;
 				so_long->avatar_y = y;
 			}
-			else if (so_long->map[x][y] != '0' && so_long->map[x][y] != '1')
+			else if (so_long->map[x][y] != '0' && so_long->map[x][y] != '1' && so_long->map[x][y] != 'G')
 				return (0);
 			y++;
 		}

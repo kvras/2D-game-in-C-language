@@ -1,27 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.h                                          :+:      :+:    :+:   */
+/*   so_long_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 00:50:49 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/15 00:35:53 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/02/15 21:03:03 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 # define SO_LONG_H
-# include "get_next_line.h"
-# include "printf.h"
+# include "../get_next_line/get_next_line.h"
+# include "../ft_printf/libftprintf.h"
 # include <stdio.h>
 # include <string.h>
-# include "libft.h"
+# include "../libft/libft.h"
 # include <OpenGL/gl.h>
 # include <mlx.h>
 # include <stdlib.h>
-#define malloc(x)  NULL
-
+// #define malloc(x)  NULL
 typedef struct s_game
 {
 	int		len;
@@ -40,6 +39,10 @@ typedef struct s_game
 	void	*exit_img;
 	void	*init;
 	void	*window;
+	void	*ennemy;
+	void	*down;
+	void	*upper;
+	void	*left;
 }	t_game;
 
 int		checker_caller(char *file, t_game *so_long);
