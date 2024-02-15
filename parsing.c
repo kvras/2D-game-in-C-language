@@ -1,140 +1,226 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/14 00:45:27 by miguiji           #+#    #+#             */
+/*   Updated: 2024/02/15 00:26:09 by miguiji          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
-void map_matrix(map *map, int fd)
+void	free_struct(t_game *so_long)
 {
-	char *str = NULL;
-	char *list = NULL;
-	char *tmp;
-	int i =0;
-	while (1)
+	int	i;
+
+	i = 0;
+	while ( so_long && so_long->map && i < so_long->len)
 	{
-		str = get_next_line(fd);
-		if(!str)
-			break;
-		else if(i == 0)
-			map->width = strlen(str) - 1;
-		tmp = ft_strjoin(list, str);
-		free(list);
-		list = NULL;
-		list = tmp;
-		free(str);
-		str = NULL;
+		free(so_long->map[i]);
 		i++;
 	}
-	map->map = ft_split(list, '\n');
-	free(list);
-	map->len = i;
-	map->player = 0;
-	map->collect = 0;
-	map->exit = 0;
+	if (so_long && so_long->map)
+		free(so_long->map);
+	free(so_long);
 }
-int flood_fill(map *map,int x, int y)
+
+t_game	*copy(t_game *so_long)
 {
-	int i;
+	t_game		*copy;
+	int			i;
+	int			j;
+
+	copy = (t_game *)malloc(sizeof(t_game));
+	copy->map = (char **)malloc(sizeof(char *) * so_long->len);
+	if(!copy || !copy->map)
+		return (free_struct(copy), NULL);
 	i = 0;
-	printf("%d\n", map->collect);
-	printf("%d\n", map->exit);
-	if(map->collect == 0 && map->exit == 0)
-		return (1);
-	if(map->map[x][y] == 'C')
-		(map->collect)--;
-	if(map->map[x][y] == 'E')
-		(map->exit)--;
-	map->map[x][y] = '1';
-	if(map->map[x + 1][y] != '1')
-		flood_fill(map, x + 1, y);
-	if(map->map[x - 1][y]!= '1')
-		flood_fill(map, x - 1, y);
-	if(map->map[x][y + 1] != '1')
-		flood_fill(map, x, y + 1);
-	if(map->map[x][y - 1] != '1')
-		flood_fill(map, x, y - 1);
-	if(map->collect == 0 && map->exit == 0)
+	while (i < so_long->len)
+	{
+		copy->map[i] = (char *)malloc(sizeof(char) * so_long->width);
+		if (!copy->map[i])
+			return (free_struct(copy), NULL);
+		j = 0;
+		while (j < so_long->width)
+		{
+			copy->map[i][j] = so_long->map[i][j];
+			j++;
+		}
+		i++;
+	}
+	copy->len = so_long->len;
+	copy->width = so_long->width;
+	copy->avatar_x = so_long->avatar_x;
+	copy->avatar_y = so_long->avatar_y;
+	copy->player = so_long->player;
+	copy->collect = so_long->collect;
+	copy->exit = so_long->exit;
+	return (copy);
+}
+
+char	*get_next_line_caller(int fd, char **line)
+{
+	free(*line);
+	*line = NULL;
+	*line = get_next_line(fd);
+	return (*line);
+}
+
+int	map_matrix(t_game *so_long, int fd)
+{
+	char	*line;
+	char	*list;
+	char	*tmp;
+	int		i;
+
+	list = NULL;
+	line = NULL;
+	i = 0;
+	while (get_next_line_caller(fd, &line))
+	{
+		if (i == 0)
+			so_long->width = ft_strlen(line);
+		tmp = ft_strjoin(list, line);
+		free(line);
+		free(list);
+		line = NULL;
+		list = tmp;
+		i++;
+	}
+	if(!list || list[ft_strlen(list) - 1] == '\n')
+		return (0);
+	so_long->map = ft_split(list, '\n');
+	if(!so_long->map)
+		return (free(list), 0);
+	free(list);
+	so_long->len = i;
+	return (so_long->player = 0, so_long->collect = 0, so_long->exit = 0, 1);
+}
+
+int	flood_fill(t_game *so_long, int x, int y)
+{
+	int	i;
+
+	i = 0;
+	if (so_long->map[x][y] == 'C')
+		(so_long->collect)--;
+	if (so_long->map[x][y] == 'E')
+	{
+		(so_long->exit)--;
+		so_long->map[x][y] = '1';
+		return (0);
+	}
+	so_long->map[x][y] = '1';
+	if (so_long->map[x + 1][y] != '1')
+		flood_fill(so_long, x + 1, y);
+	if (so_long->map[x - 1][y] != '1')
+		flood_fill(so_long, x - 1, y);
+	if (so_long->map[x][y + 1] != '1')
+		flood_fill(so_long, x, y + 1);
+	if (so_long->map[x][y - 1] != '1')
+		flood_fill(so_long, x, y - 1);
+	if (so_long->collect == 0 && so_long->exit == 0)
 		return (1);
 	return (0);
 }
-int simple_checker(map *map)
+int	components_checker(t_game *so_long)
 {
-	int i;
-	int x;
-	int y;
-	i = 0;
+	if (so_long->exit == 1 && so_long->player == 1 && so_long->collect > 0)
+		return (1);
+	return (0);
+}
+int	borders_checker(t_game *so_long)
+{
+	int	x;
+	int	y;
+
 	x = 0;
-	y = 0;
-	while(map->map[x])
+	while (so_long->map[x])
 	{
-		if(strlen(map->map[x]) != map->width)
-			return (0);
 		y = 0;
-		while (map->map[x][y])
+		while (so_long->map[x][y])
 		{
-			if(map->map[x][y] == 'E')
-				map->exit++;
-			else if(map->map[x][y] == 'C')
-				map->collect++;
-			else if(map->map[x][y] == 'P')
-			{
-				map->player++;
-				map->avatar_x = x;
-				map->avatar_x = y;
-			}
-			else if(map->map[x][y] != '0' && map->map[x][y] != '1')
+			if ((y == 0 || x == 0) && so_long->map[x][y] != '1')
 				return (0);
-			if(map->map[x][0] != '1' || map->map[x][map->width - 1] != '1')
+			if ((y == so_long->width - 1 || x == so_long->len - 1 ) && so_long->map[x][y] != '1')
 				return (0);
-			if(x == 0)
-			{
-				if(map->map[x][y] != '1')
-					return (0);
-			}
-			else if (x == map->len - 1)
-			{
-				if(map->map[x][y] != '1')
-					return (0);
-			}
 			y++;
 		}
-		x++;	
+		x++;
+	}
+	return (1);
+}
+int	components_counter(t_game *so_long)
+{
+	int	x;
+	int	y;
+
+	x = 0;
+	while (so_long->map[x])
+	{
+		y = 0;
+		while (so_long->map[x][y])
+		{
+			if (so_long->map[x][y] == 'E')
+				so_long->exit++;
+			else if (so_long->map[x][y] == 'C')
+				so_long->collect++;
+			else if (so_long->map[x][y] == 'P')
+			{
+				so_long->player++;
+				so_long->avatar_x = x;
+				so_long->avatar_y = y;
+			}
+			else if (so_long->map[x][y] != '0' && so_long->map[x][y] != '1')
+				return (0);
+			y++;
+		}
+		x++;
 	}
 	return (1);
 }
 
-int deep_checker(map *map)
+int	deep_checker(t_game *so_long)
 {
-	if(simple_checker(map) && map->exit == 1 && map->collect > 0 && map->player == 1)
-			return (1);
+	int	x;
+
+	x = 0;
+	while (so_long->map[x])
+		x++;
+	if (so_long->len != x)
+		return (0);
+	if (components_counter(so_long) && components_checker(so_long) && borders_checker(so_long))
+		return (1);
 	return (0);
 }
-int checker_caller(char *file, map *map)
+int checker_caller(char *file, t_game *so_long)
 {
-	int response = 0;
-	int fd;
-	int i = 0;
-	if(strnstr(file, ".ber", strlen(file)) == NULL)
+	t_game	*copy_struct;
+	int		response;
+	int		fd;
+	int		i;
+
+	i = 0;
+	response = 0;
+	if (ft_strnstr(file + (ft_strlen(file) - 4), ".ber", 4) == NULL)
 		return (0);
 	fd = open(file, O_RDONLY);
-	if(fd == -1)
+	if (fd == -1)
 		return (0);
-	map_matrix(map, fd);
-	response = deep_checker(map);
-	if(response == 1)
-		response = flood_fill(map,map->avatar_x,map->avatar_y);
-	printf("%d\n", response);
+	if(!map_matrix(so_long, fd))
+		return (0);
+	response = deep_checker(so_long);
+	if (response == 1)
+	{
+		copy_struct = copy(so_long);
+		if (!copy_struct)
+			return (0);
+		response = flood_fill(copy_struct, so_long->avatar_x, so_long->avatar_y);
+		free_struct(copy_struct);
+	}
 	close(fd);
 	return (response);
 }
-// int main(int argc, char **argv)
-// {
-// 	int i;
-// 	if(argc == 2)
-// 		i = checker_caller(argv[1]);
-// 	else
-// 	{
-// 		printf("Error\n");
-// 		return (0);
-// 	}
-// 	if(i == 1)
-// 		printf("OK\n");
-// 	else
-// 		printf("Error\n");
-// }
