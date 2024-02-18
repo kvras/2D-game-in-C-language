@@ -6,71 +6,11 @@
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 00:45:27 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/15 17:42:21 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/02/18 14:13:34 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long_bonus.h"
-
-void	free_struct(t_game *so_long)
-{
-	int	i;
-
-	i = 0;
-	while ( so_long && so_long->map && i < so_long->len)
-	{
-		free(so_long->map[i]);
-		i++;
-	}
-	if (so_long && so_long->map)
-		free(so_long->map);
-	free(so_long);
-}
-
-t_game	*copy(t_game *so_long)
-{
-	t_game		*copy;
-	int			i;
-	int			j;
-
-
-	copy = (t_game *)malloc(sizeof(t_game));
-	if(!copy)
-		return (NULL);
-	copy->map = (char **)malloc(sizeof(char *) * so_long->len);
-	if (!copy->map)
-		return (free_struct(copy), NULL);
-	i = 0;
-	while (i < so_long->len)
-	{
-		copy->map[i] = (char *)malloc(sizeof(char) * so_long->width);
-		if (!copy->map[i])
-			return (free_struct(copy), NULL);
-		j = 0;
-		while (j < so_long->width)
-		{
-			copy->map[i][j] = so_long->map[i][j];
-			j++;
-		}
-		i++;
-	}
-	copy->len = so_long->len;
-	copy->width = so_long->width;
-	copy->avatar_x = so_long->avatar_x;
-	copy->avatar_y = so_long->avatar_y;
-	copy->player = so_long->player;
-	copy->collect = so_long->collect;
-	copy->exit = so_long->exit;
-	return (copy);
-}
-
-char	*get_next_line_caller(int fd, char **line)
-{
-	free(*line);
-	*line = NULL;
-	*line = get_next_line(fd);
-	return (*line);
-}
 
 int	map_matrix(t_game *so_long, int fd)
 {
@@ -79,24 +19,21 @@ int	map_matrix(t_game *so_long, int fd)
 	char	*tmp;
 	int		i;
 
-	list = NULL;
 	line = NULL;
+	list = NULL;
 	i = 0;
 	while (get_next_line_caller(fd, &line))
 	{
-		if (i == 0)
-			so_long->width = ft_strlen(line);
+		if (i++ == 0)
+			so_long->width = ft_strlen(line) - 1;
 		tmp = ft_strjoin(list, line);
-		free(line);
 		free(list);
-		line = NULL;
 		list = tmp;
-		i++;
 	}
-	if(!list || list[ft_strlen(list) - 1] == '\n')
-		return (0);
+	if (!list || list[ft_strlen(list) - 1] == '\n')
+		return (free(list), 0);
 	so_long->map = ft_split(list, '\n');
-	if(!so_long->map)
+	if (!so_long->map)
 		return (free(list), 0);
 	free(list);
 	so_long->len = i;
@@ -130,12 +67,7 @@ int	flood_fill(t_game *so_long, int x, int y)
 		return (1);
 	return (0);
 }
-int	components_checker(t_game *so_long)
-{
-	if (so_long->exit == 1 && so_long->player == 1 && so_long->collect > 0)
-		return (1);
-	return (0);
-}
+
 int	borders_checker(t_game *so_long)
 {
 	int	x;
@@ -149,24 +81,28 @@ int	borders_checker(t_game *so_long)
 		{
 			if ((y == 0 || x == 0) && so_long->map[x][y] != '1')
 				return (0);
-			if ((y == so_long->width - 1 || x == so_long->len - 1 ) && so_long->map[x][y] != '1')
+			if ((y == so_long->width - 1 || x == so_long->len - 1)
+				&& so_long->map[x][y] != '1')
 				return (0);
 			y++;
 		}
 		x++;
 	}
+	if (so_long->len > 100 || so_long->width > 100)
+		return (0);
 	return (1);
 }
+
 int	components_counter(t_game *so_long)
 {
 	int	x;
 	int	y;
 
-	x = 0;
-	while (so_long->map[x])
+	x = -1;
+	while (so_long->map[++x])
 	{
-		y = 0;
-		while (so_long->map[x][y])
+		y = -1;
+		while (so_long->map[x][++y])
 		{
 			if (so_long->map[x][y] == 'E')
 				so_long->exit++;
@@ -175,32 +111,18 @@ int	components_counter(t_game *so_long)
 			else if (so_long->map[x][y] == 'P')
 			{
 				so_long->player++;
-				so_long->avatar_x = x;
-				so_long->avatar_y = y;
+				so_long->x = x;
+				so_long->y = y;
 			}
-			else if (so_long->map[x][y] != '0' && so_long->map[x][y] != '1' && so_long->map[x][y] != 'G')
+			else if (so_long->map[x][y] != '0' && so_long->map[x][y] != '1'
+				&& so_long->map[x][y] != 'G')
 				return (0);
-			y++;
 		}
-		x++;
 	}
 	return (1);
 }
 
-int	deep_checker(t_game *so_long)
-{
-	int	x;
-
-	x = 0;
-	while (so_long->map[x])
-		x++;
-	if (so_long->len != x)
-		return (0);
-	if (components_counter(so_long) && components_checker(so_long) && borders_checker(so_long))
-		return (1);
-	return (0);
-}
-int checker_caller(char *file, t_game *so_long)
+int	checker_caller(char *file, t_game *so_long)
 {
 	t_game	*copy_struct;
 	int		response;
@@ -214,7 +136,7 @@ int checker_caller(char *file, t_game *so_long)
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 		return (0);
-	if(!map_matrix(so_long, fd))
+	if (!map_matrix(so_long, fd))
 		return (0);
 	response = deep_checker(so_long);
 	if (response == 1)
@@ -222,9 +144,9 @@ int checker_caller(char *file, t_game *so_long)
 		copy_struct = copy(so_long);
 		if (!copy_struct)
 			return (0);
-		response = flood_fill(copy_struct, so_long->avatar_x, so_long->avatar_y);
+		response = flood_fill(copy_struct, so_long->x,
+				so_long->y);
 		free_struct(copy_struct);
 	}
-	close(fd);
-	return (response);
+	return (close(fd), response);
 }

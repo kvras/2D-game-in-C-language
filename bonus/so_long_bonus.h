@@ -6,46 +6,63 @@
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 00:50:49 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/15 21:03:03 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/02/18 17:38:55 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SO_LONG_H
-# define SO_LONG_H
-# include "../get_next_line/get_next_line.h"
-# include "../ft_printf/libftprintf.h"
+#ifndef SO_LONG_BONUS_H
+# define SO_LONG_BONUS_H
 # include <stdio.h>
 # include <string.h>
-# include "../libft/libft.h"
 # include <OpenGL/gl.h>
 # include <mlx.h>
 # include <stdlib.h>
-// #define malloc(x)  NULL
+# include "../ft_printf/libftprintf.h"
+# include "../basic_functions/libft.h"
+
 typedef struct s_game
 {
 	int		len;
 	int		width;
-	int		avatar_x;
-	int		avatar_y;
+	int		x;
+	int		y;
 	int		player;
 	int		collect;
 	int		exit;
 	int		mouvements;
 	char	**map;
 	void	*road;
+	void	*right;
+	void	*left;
+	void	*up;
+	void	*down;
 	void	*avatar;
 	void	*wall;
-	void	*collect_img;
-	void	*exit_img;
+	void	*coin;
+	void	*door;
 	void	*init;
 	void	*window;
 	void	*ennemy;
-	void	*down;
-	void	*upper;
-	void	*left;
 }	t_game;
 
 int		checker_caller(char *file, t_game *so_long);
-char	*ft_itoa(int nbr);
+void	destroy(t_game display);
+void	free_arr(char **arr);
+int		close_window(int keycode, void *param);
+int		on_destroy(void *param);
+void	free_struct(t_game *so_long);
+int		img_mnpl(int keycode, void *param);
+void	mini_img_to_window(t_game *param, void *img, int x, int y);
+int		img_manipul(int keycode, void *param);
+int		initialise_images(t_game *d);
+void	print_components(t_game *game);
+int		initialisation_check(t_game *d);
+int		checker(int x, int y, void *param);
+t_game	*copy(t_game *so_long);
+char	*get_next_line_caller(int fd, char **line);
+int		components_checker(t_game *so_long);
+int		components_counter(t_game *so_long);
+int		borders_checker(t_game *so_long);
+int		deep_checker(t_game *so_long);
 
 #endif
