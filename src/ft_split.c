@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "game.h"
 
 static	int	word_count(char *original, char c)
 {

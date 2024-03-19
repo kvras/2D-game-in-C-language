@@ -1,29 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr.c                                        :+:      :+:    :+:   */
+/*   ft_puthexx.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/09 17:30:21 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/03 03:46:20 by miguiji          ###   ########.fr       */
+/*   Created: 2023/11/18 12:14:52 by miguiji           #+#    #+#             */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "game.h"
 
-void	ft_putstr(char *string, int *len, int *erreur)
+void	ft_puthexx(unsigned int nbr, char format, int *len, int *erreur)
 {
-	if (string == NULL)
-	{
-		*len += write(1, "(null)", 6);
-		return ;
-	}
-	while (*string)
-	{
-		if (*erreur == -1)
-			return ;
-		ft_putchar(*string, len, erreur);
-		string++;
-	}
+	ft_puthex((unsigned long long)nbr, format, len, erreur);
 }

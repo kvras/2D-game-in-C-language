@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "game.h"
 
 void	ft_putchar(char c, int *len, int *erreur)
 {

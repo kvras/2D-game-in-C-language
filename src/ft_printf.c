@@ -6,11 +6,11 @@
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 17:20:44 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/17 16:03:12 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "game.h"
 
 void	set_zero(int *a, int *b, int *c)
 {

@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/17 14:15:48 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/18 17:39:39 by miguiji          ###   ########.fr       */
+/*   Created: 2024/02/18 13:45:09 by miguiji           #+#    #+#             */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "game.h"
 
 void	mini_img_to_window(t_game *param, void *img, int x, int y)
 {
@@ -42,7 +42,7 @@ int	img_manipul(int keycode, void *param)
 		mini_img_to_window(mlx, mlx->road, (mlx->y--) * 50, mlx->x * 50);
 		checker(mlx->x, mlx->y + 1, param);
 	}
-	mini_img_to_window(mlx, mlx->right, mlx->y * 50, mlx->x * 50);
+	mini_img_to_window(mlx, mlx->avatar, mlx->y * 50, mlx->x * 50);
 	return (0);
 }
 
@@ -66,7 +66,11 @@ int	initialise_images(t_game *d)
 	d->road = mlx_xpm_file_to_image(d->init, "./textures/map.xpm", &x, &y);
 	d->coin = mlx_xpm_file_to_image(d->init, "./textures/collect.xpm", &x, &y);
 	d->door = mlx_xpm_file_to_image(d->init, "./textures/door.xpm", &x, &y);
-	d->window = mlx_new_window(d->init, d->width * 50, d->len * 50, "so_long");
+	d->ennemy = mlx_xpm_file_to_image(d->init, "./textures/ghost.xpm", &x, &y);
+	d->left = mlx_xpm_file_to_image(d->init, "./textures/left.xpm", &x, &y);
+	d->up = mlx_xpm_file_to_image(d->init, "./textures/upper.xpm", &x, &y);
+	d->down = mlx_xpm_file_to_image(d->init, "./textures/down.xpm", &x, &y);
+	d->window = mlx_new_window(d->init, d->width * 50, d->len * 50, "game");
 	return (initialisation_check(d));
 }
 
@@ -91,6 +95,8 @@ void	print_components(t_game *game)
 				mini_img_to_window(game, game->right, x * 50, y * 50);
 			else if (game->map[y][x] == 'E')
 				mini_img_to_window(game, game->door, x * 50, y * 50);
+			else if (game->map[y][x] == 'G')
+				mini_img_to_window(game, game->ennemy, x * 50, y * 50);
 			x++;
 		}
 		y++;

@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_help_functions_bonus.c                     :+:      :+:    :+:   */
+/*   parsing_help_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 13:27:17 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/18 17:48:23 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long_bonus.h"
+#include "game.h"
 
-t_game	*copy(t_game *so_long)
+t_game	*copy(t_game *game)
 {
 	t_game		*copy;
 	int			i;
@@ -20,22 +20,22 @@ t_game	*copy(t_game *so_long)
 	copy = (t_game *)malloc(sizeof(t_game));
 	if (!copy)
 		return (NULL);
-	copy->map = (char **)malloc(sizeof(char *) * so_long->len);
+	copy->map = (char **)malloc(sizeof(char *) * game->len);
 	if (!copy->map)
 		return (free_struct(copy), NULL);
 	i = -1;
-	while (++i < so_long->len)
+	while (++i < game->len)
 	{
-		copy->map[i] = ft_strdup(so_long->map[i]);
+		copy->map[i] = ft_strdup(game->map[i]);
 		if (!copy->map[i])
 			return (free_struct(copy), NULL);
 	}
-	copy->len = so_long->len;
-	copy->width = so_long->width;
-	copy->x = so_long->x;
-	copy->y = so_long->y;
-	copy->player = so_long->player;
-	return (copy->collect = so_long->collect, copy->exit = so_long->exit, copy);
+	copy->len = game->len;
+	copy->width = game->width;
+	copy->x = game->x;
+	copy->y = game->y;
+	copy->player = game->player;
+	return (copy->collect = game->collect, copy->exit = game->exit, copy);
 }
 
 char	*get_next_line_caller(int fd, char **line)
@@ -46,24 +46,24 @@ char	*get_next_line_caller(int fd, char **line)
 	return (*line);
 }
 
-int	components_checker(t_game *so_long)
+int	components_checker(t_game *game)
 {
-	if (so_long->exit == 1 && so_long->player == 1 && so_long->collect > 0)
+	if (game->exit == 1 && game->player == 1 && game->collect > 0)
 		return (1);
 	return (0);
 }
 
-int	deep_checker(t_game *so_long)
+int	deep_checker(t_game *game)
 {
 	int	x;
 
 	x = 0;
-	while (so_long->map[x])
+	while (game->map[x])
 		x++;
-	if (so_long->len != x)
+	if (game->len != x)
 		return (0);
-	if (components_counter(so_long) && components_checker(so_long)
-		&& borders_checker(so_long))
+	if (components_counter(game) && components_checker(game)
+		&& borders_checker(game))
 		return (1);
 	return (0);
 }

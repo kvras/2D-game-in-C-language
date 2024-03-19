@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   protection_functions_bonus.c                       :+:      :+:    :+:   */
+/*   protection_functions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/18 13:29:54 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/18 17:40:49 by miguiji          ###   ########.fr       */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long_bonus.h"
+#include "game.h"
 
 void	destroy(t_game display)
 {
@@ -73,23 +73,22 @@ int	on_destroy(void *param)
 	t_game	*mlx;
 
 	mlx = (t_game *)param;
-	mlx_destroy_window(mlx->init, mlx->window);
 	destroy(*mlx);
 	free_arr(mlx->map);
 	exit(0);
 }
 
-void	free_struct(t_game *so_long)
+void	free_struct(t_game *game)
 {
 	int	i;
 
 	i = 0;
-	while (so_long && so_long->map && i < so_long->len)
+	while (game && game->map && i < game->len)
 	{
-		free(so_long->map[i]);
+		free(game->map[i]);
 		i++;
 	}
-	if (so_long && so_long->map)
-		free(so_long->map);
-	free(so_long);
+	if (game && game->map)
+		free(game->map);
+	free(game);
 }

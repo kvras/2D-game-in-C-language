@@ -1,24 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_puthex.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/18 13:36:51 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/18 17:45:33 by miguiji          ###   ########.fr       */
+/*   Created: 2023/11/09 17:29:20 by miguiji           #+#    #+#             */
+/*   Updated: 2024/03/19 21:06:46 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
-# define LIBFT_H
-# include <stdlib.h>
-# include <unistd.h>
-# include "../get_next_line/get_next_line.h"
+#include "game.h"
 
-char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
-char	*ft_strjoin(const char *s1, const char *s2);
-char	**ft_split(char *original, char c);
-void	*ft_memmove(void *dst, const void *src, size_t len);
-char	*ft_itoa(int nbr);
-#endif
+void	ft_puthex(unsigned long long nbr, char format, int *len, int *erreur)
+{
+	char	*hex;
+
+	if (format == 'X')
+		hex = "0123456789ABCDEF";
+	else
+		hex = "0123456789abcdef";
+	if (nbr / 16 > 0)
+		ft_puthex(nbr / 16, format, len, erreur);
+	if (*erreur == -1)
+		return ;
+	ft_putchar(hex[nbr % 16], len, erreur);
+}

@@ -1,16 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.c                                          :+:      :+:    :+:   */
+/*   game.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: miguiji <miguiji@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/29 18:29:22 by miguiji           #+#    #+#             */
-/*   Updated: 2024/02/18 17:28:01 by miguiji          ###   ########.fr       */
+/*   Created: 2024/02/18 13:29:02 by miguiji           #+#    #+#             */
+/*   Updated: 2024/03/19 21:00:01 by miguiji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "so_long.h"
+#include "game.h"
+
+static void	print_score(t_game *mlx)
+{
+	int		j;
+	char	*str;
+	int		color;
+	char	*string;
+
+	string = "steps : ";
+	color = 16777215;
+	j = 0;
+	ft_printf("%s %d\n", string, ++mlx->mouvements);
+	while (j <= 3)
+	{
+		mlx_put_image_to_window(mlx->init, mlx->window, mlx->wall, j * 50, 0);
+		j++;
+	}
+	str = ft_itoa(mlx->mouvements);
+	if (!str)
+		return ;
+	mlx_string_put(mlx->init, mlx->window, 20, 15, color, string);
+	mlx_string_put(mlx->init, mlx->window, 100, 15, color, str);
+	free(str);
+	str = NULL;
+}
 
 int	checker(int x, int y, void *param)
 {
@@ -22,26 +47,27 @@ int	checker(int x, int y, void *param)
 		mlx->map[mlx->x][mlx->y] = '0';
 		mlx->collect--;
 	}
+	else if ((mlx->map[mlx->x][mlx->y] == 'E' && mlx->collect == 0)
+		|| mlx->map[mlx->x][mlx->y] == 'G')
+	{
+		print_score(mlx);
+		destroy(*mlx);
+		exit(0);
+	}
 	else if (mlx->map[mlx->x][mlx->y] == 'E')
 	{
-		if (mlx->collect == 0)
-		{
-			ft_printf("total mouvements: %d\n", ++mlx->mouvements);
-			mlx_destroy_window(mlx->init, mlx->window);
-			exit(0);
-		}
 		mlx->x = x;
 		mlx->y = y;
 		return (1);
 	}
-	ft_printf("total mouvements: %d\n", ++mlx->mouvements);
+	print_score(mlx);
 	return (1);
 }
 
 int	initialisation_check(t_game *d)
 {
 	if (!d->right || !d->wall || !d->road || !d->coin || !d->door || !d->window
-		|| !d->init)
+		|| !d->init || !d->ennemy || !d->up || !d->down || !d->left)
 		return (destroy(*d), 0);
 	return (1);
 }

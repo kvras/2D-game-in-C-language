@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "game.h"
 
 void	ft_putnbr(int nb, int *len, int *erreur)
 {
